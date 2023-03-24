@@ -212,7 +212,7 @@ build() {
   export MOZBUILD_STATE_PATH="$srcdir/mozbuild"
   export MOZ_APP_REMOTINGNAME=$pkgname
   export CARGO_HOME="$srcdir"/.cargo
-  export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=system
+  export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=pip
 
   # LTO needs more open files
   ulimit -n 4096
