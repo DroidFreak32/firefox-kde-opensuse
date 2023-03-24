@@ -13,7 +13,7 @@ _pgo=true
 
 _pkgname=firefox
 pkgname=$_pkgname-kde-opensuse
-pkgver=107.0
+pkgver=111.0
 pkgrel=1
 pkgdesc="Standalone web browser from mozilla.org with OpenSUSE patch, integrate better with KDE"
 arch=('i686' 'x86_64')
@@ -124,6 +124,9 @@ _mozilla_api_key=e05d56db0a694edc8b5aaebda3f2db6a
 prepare() {
   cd mozilla-unified
 
+  hg update --clean
+  hg purge
+  
   cp "$srcdir/mozconfig" .mozconfig
 
   echo -n "$_google_api_key" >google-api-key
@@ -135,7 +138,7 @@ prepare() {
   echo -n "$_mozilla_api_key" >mozilla-api-key
   echo "ac_add_options --with-mozilla-api-keyfile=\"$PWD/mozilla-api-key\"" >>.mozconfig
 
-  for patch in "$srcdir/*.patch" ; do
+  for patch in $srcdir/*.patch ; do
     echo "Applying $patch"
     patch -p1 -i "$patch"
   done
@@ -205,13 +208,9 @@ package() {
   )
   cd mozilla-unified
 
-  [[ "$CARCH" == "i686" ]] && cp "$srcdir/kde.js" obj-i686-pc-linux-gnu/dist/bin/defaults/pref
-  [[ "$CARCH" == "x86_64" ]] && cp "$srcdir/kde.js" obj-x86_64-pc-linux-gnu/dist/bin/defaults/pref
-
   DESTDIR="$pkgdir" ./mach install
 
   install -Dm644 "$srcdir/vendor.js" "$pkgdir/usr/lib/firefox/browser/defaults/preferences/vendor.js"
-  install -Dm644 "$srcdir/kde.js" "$pkgdir/usr/lib/firefox/browser/defaults/preferences/kde.js"
 
   _distini="$pkgdir/usr/lib/firefox/distribution/distribution.ini"
   install -Dm644 /dev/stdin "$_distini" <<END
